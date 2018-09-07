@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Game" Collapsed="true">
+    <Position X="4" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAgUAQDABABAAABEBAAQgAAiBABgIIBAAAAgUICA=</HashCode>
+      <FileName>game.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="graphics" />
+      <Field Name="input" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Graphics" Collapsed="true">
+    <Position X="6.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgASgAEBIAkEIRAREEAAACACBQEBAQIIAECAAgAAAE=</HashCode>
+      <FileName>graphics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input" Collapsed="true">
+    <Position X="4" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>A8AQRAABW0AROEOABMEIIEWYHEEAwBBUQFAIAQgBAgA=</HashCode>
+      <FileName>input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceWar" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAUAABgBAAAAEAAAAAAAAAAgBIwABAAAAUAAA=</HashCode>
+      <FileName>spaceWar.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="nebulaTexture" />
+      <Field Name="planetTexture" />
+      <Field Name="planet" />
+      <Field Name="nebula" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="TextureManager" Collapsed="true">
+    <Position X="7" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAABAAAgQARIEAAAAABAABQggABAAAAAAAAEA=</HashCode>
+      <FileName>textureManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Image" Collapsed="true">
+    <Position X="7" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>cAAQAYhAgDAELgEAACM+AIIACACpwBsCAACATmQEAgQ=</HashCode>
+      <FileName>image.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="textureManager" />
+      <Field Name="spriteData" />
+    </ShowAsAssociation>
+  </Class>
+  <Struct Name="SpriteData" Collapsed="true">
+    <Position X="9.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAQAQAAAIAICAAAAAgAAAABgAABAAAA=</HashCode>
+      <FileName>graphics.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="メイリオ" Size="9" />
+</ClassDiagram>

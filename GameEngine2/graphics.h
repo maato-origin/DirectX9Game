@@ -20,6 +20,7 @@
 #define LP_SPRITE LPD3DXSPRITE
 #define LP_3DDEVICE LPDIRECT3DDEVICE9
 #define LP_3D       LPDIRECT3D9
+#define VECTOR2 D3DXVECTOR2
 
 // Color defines
 #define COLOR_ARGB DWORD
@@ -146,6 +147,15 @@ public:
 
     // Reset the graphics device.
     HRESULT reset();
+
+	//ベクトルVの長さをfloatとして戻す
+	static float Vector2Length(const VECTOR2 *v) { return D3DXVec2Length(v); }
+
+	//ベクトルV1とV2のドット積をfloatとして戻す
+	static float Vector2Dot(const VECTOR2 *v1, const VECTOR2 *v2) { return D3DXVec2Dot(v1, v2); }
+
+	//ベクトルVを単位ベクトルに変換
+	static void Vector2Normalize(VECTOR2 *v) { D3DXVec2Normalize(v, v); }
 
     // get functions
     // Return direct3d.

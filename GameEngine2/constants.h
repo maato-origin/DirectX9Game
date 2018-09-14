@@ -38,6 +38,7 @@ const char GAME_TITLE[] = "Spacewar";
 const bool FULLSCREEN = false;              // windowed or fullscreen
 const UINT GAME_WIDTH =  640;               // width of game in pixels
 const UINT GAME_HEIGHT = 480;               // height of game in pixels
+
 const int SHIP_START_FRAME = 0;				//starting frame of ship animation
 const int SHIP_END_FRAME = 3;				//last frame of ship animation
 const float SHIP_ANIMATION_DELAY = 0.2f;	//time between frames of ship animation

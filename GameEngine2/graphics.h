@@ -148,6 +148,8 @@ public:
     // Reset the graphics device.
     HRESULT reset();
 
+	void changeDisplayMode(graphicsNS::DISPLAY_MODE mode = graphicsNS::TOGGLE);
+
 	//ベクトルVの長さをfloatとして戻す
 	static float Vector2Length(const VECTOR2 *v) { return D3DXVec2Length(v); }
 
@@ -156,6 +158,9 @@ public:
 
 	//ベクトルVを単位ベクトルに変換
 	static void Vector2Normalize(VECTOR2 *v) { D3DXVec2Normalize(v, v); }
+
+	//行列mを用いてベクトルVを変換
+	static VECTOR2* Vector2Transform(VECTOR2 *v, D3DXMATRIX *m) { return D3DXVec2TransformCoord(v, v, m); }
 
     // get functions
     // Return direct3d.
@@ -169,6 +174,9 @@ public:
 
     // Test for lost device
     HRESULT getDeviceState();
+
+	//Return fullscreen
+	bool getFullscreen() { return fullscreen; }
 
     //=============================================================================
     // Inline functions for speed. How much more speed? It depends on the game and

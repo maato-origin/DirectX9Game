@@ -295,3 +295,65 @@ HRESULT Graphics::reset()
     return result;
 }
 
+//=============================================================================
+// Toggle window or fullscreen mode
+// Pre: All user created D3DPOOL_DEFAULT surfaces are freed.
+// Post: All user surfaces are recreated.
+//=============================================================================
+void Graphics::changeDisplayMode(graphicsNS::DISPLAY_MODE mode)
+{
+	try {
+		switch (mode)
+		{
+		case graphicsNS::FULLSCREEN:
+			if (fullscreen)      // if already in fullscreen mode
+				return;
+			fullscreen = true; break;
+		case graphicsNS::WINDOW:
+			if (fullscreen == false) // if already in window mode
+				return;
+			fullscreen = false; break;
+		default:        // default to toggle window/fullscreen
+			fullscreen = !fullscreen;
+		}
+		reset();
+		if (fullscreen)  // fullscreen
+		{
+			SetWindowLong(hwnd, GWL_STYLE, WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP);
+		}
+		else            // windowed
+		{
+			SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+			SetWindowPos(hwnd, HWND_TOP, 0, 0, GAME_WIDTH, GAME_HEIGHT,
+				SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+			// Adjust window size so client area is GAME_WIDTH x GAME_HEIGHT
+			RECT clientRect;
+			GetClientRect(hwnd, &clientRect);   // get size of client area of window
+			MoveWindow(hwnd,
+				0,                                           // Left
+				0,                                           // Top
+				GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // Right
+				GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // Bottom
+				TRUE);                                       // Repaint the window
+		}
+
+	}
+	catch (...)
+	{
+		// An error occured, try windowed mode 
+		SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hwnd, HWND_TOP, 0, 0, GAME_WIDTH, GAME_HEIGHT,
+			SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+		// Adjust window size so client area is GAME_WIDTH x GAME_HEIGHT
+		RECT clientRect;
+		GetClientRect(hwnd, &clientRect);   // get size of client area of window
+		MoveWindow(hwnd,
+			0,                                           // Left
+			0,                                           // Top
+			GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // Right
+			GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // Bottom
+			TRUE);                                       // Repaint the window
+	}
+}

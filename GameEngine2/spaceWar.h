@@ -5,6 +5,8 @@
 #include "game.h"
 #include "textureManager.h"
 #include "image.h"
+#include "planet.h"
+#include "ship.h"
 
 //このクラスはゲームエンジンのコア
 class SpaceWar : public Game
@@ -12,11 +14,10 @@ class SpaceWar : public Game
 private:
 	//ゲームアイテム
 	TextureManager nebulaTexture;		//星雲のテクスチャ
-	TextureManager planetTexture;		//惑星のテクスチャ
-	TextureManager shipTexture;			//宇宙船のテクスチャ
-	Image planet;						//惑星の画像
+	TextureManager gameTextures;		//ゲーム用テクスチャ
+	Ship ship1, ship2;					//宇宙船のクラス
+	Planet planet;						//惑星のクラス
 	Image nebula;						//星雲の画像
-	Image ship;							//宇宙船の画像
 
 public:
 	//コンストラクタ

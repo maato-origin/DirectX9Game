@@ -129,6 +129,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="planet.h" />
     <ClInclude Include="ship.h" />
     <ClInclude Include="spaceWar.h" />
     <ClInclude Include="textureManager.h" />
@@ -139,6 +140,8 @@
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="planet.cpp" />
+    <ClCompile Include="ship.cpp" />
     <ClCompile Include="spaceWar.cpp" />
     <ClCompile Include="textureManager.cpp" />
     <ClCompile Include="winmain.cpp" />

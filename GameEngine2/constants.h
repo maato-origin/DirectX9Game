@@ -29,8 +29,7 @@
 //-----------------------------------------------
 //graphic images
 const char NEBULA_IMAGE[] = "pictures\\orion.jpg";
-const char PLANET_IMAGE[] = "pictures\\planet.png";
-const char SHIP_IMAGE[] = "pictures\\ship.png";
+const char TEXTURES_IMAGE[] = "pictures\\textures.png";
 
 // window
 const char CLASS_NAME[] = "Spacewar";
@@ -38,17 +37,6 @@ const char GAME_TITLE[] = "Spacewar";
 const bool FULLSCREEN = false;              // windowed or fullscreen
 const UINT GAME_WIDTH =  640;               // width of game in pixels
 const UINT GAME_HEIGHT = 480;               // height of game in pixels
-
-const int SHIP_START_FRAME = 0;				//starting frame of ship animation
-const int SHIP_END_FRAME = 3;				//last frame of ship animation
-const float SHIP_ANIMATION_DELAY = 0.2f;	//time between frames of ship animation
-const int SHIP_COLS = 2;					//ship texture has 2 columns
-const int SHIP_WIDTH = 32;					//width of ship image
-const int SHIP_HEIGHT = 32;					//height of ship image
-const float ROTATION_RATE = 180.0f;			//degrees per second
-const float SCALE_RATE = 0.2f;				//% change per second
-const float SHIP_SPEED = 100.0f;			//pixels per second
-const float SHIP_SCALE = 1.5f;				//starting ship scale
  
 // game
 const double PI = 3.14159265;
@@ -56,6 +44,9 @@ const float FRAME_RATE  = 120.0f;               // the target frame rate (frames
 const float MIN_FRAME_RATE = 30.0f;             // the minimum frame rate
 const float MIN_FRAME_TIME = 1.0f/FRAME_RATE;   // minimum desired time for 1 frame
 const float MAX_FRAME_TIME = 1.0f/MIN_FRAME_RATE; // maximum time used in calculations
+const float GRAVITY = 6.67428e-11f;				//gravitational constant
+const float MASS_PLANET = 1.0e14f;
+const float MASS_SHIP = 5.0f;
 
 // key mappings
 // In this game simple constants are used for key mappings. If variables were used
@@ -67,5 +58,8 @@ const UCHAR SHIP_LEFT_KEY = VK_LEFT;	//left arrow
 const UCHAR SHIP_RIGHT_KEY = VK_RIGHT;	//right arrow
 const UCHAR SHIP_UP_KEY = VK_UP;		//up arrow
 const UCHAR SHIP_DOWN_KEY = VK_DOWN;	//down arrow
+
+//weapon types
+enum WEAPON { TORPEDO, SHIP, PLANET };
 
 #endif

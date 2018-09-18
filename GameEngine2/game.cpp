@@ -148,6 +148,17 @@ void Game::handleLostGraphicsDevice()
 	}
 }
 
+//=============================================================================
+// Toggle window or fullscreen mode
+//=============================================================================
+void Game::setDisplayMode(graphicsNS::DISPLAY_MODE mode)
+{
+	releaseAll();                   // free all user created surfaces
+	graphics->changeDisplayMode(mode);
+	resetAll();                     // recreate surfaces
+}
+
+
 //WinMain内のメインのメッセージループで繰り返し呼び出される
 void Game::run(HWND hwnd)
 {

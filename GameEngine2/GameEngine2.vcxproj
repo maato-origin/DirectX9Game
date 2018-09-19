@@ -122,6 +122,7 @@
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="audio.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="textureManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="audio.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />

@@ -48,6 +48,22 @@ const float GRAVITY = 6.67428e-11f;				//gravitational constant
 const float MASS_PLANET = 1.0e14f;
 const float MASS_SHIP = 5.0f;
 
+//audio files required by audio.cpp
+//WAVE_BANK must be location of .xwb file.
+const char WAVE_BANK[] = "audio\\Win\\WavesExample1.xwb";
+//SOUND_BANK must be location of .xsb file.
+const char SOUND_BANK[] = "audio\\Win\\SoundsExample1.xsb";
+
+//audio cues
+const char BEEP1[] = "beep1";
+const char BEEP2[] = "beep2";
+const char BEEP3[] = "beep3";
+const char BEEP4[] = "beep4";
+const char HIT[] = "beep4";
+
+const char LIMIT1[] = "Limit1";
+const char NOLIMIT1[] = "NoLimit";
+
 // key mappings
 // In this game simple constants are used for key mappings. If variables were used
 // it would be possible to save and restore key mappings from a data file.

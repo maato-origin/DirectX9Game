@@ -6,6 +6,7 @@
 #include <mmsystem.h>
 #include "graphics.h"
 #include "input.h"
+#include "audio.h"
 #include "constants.h"
 #include "gameError.h"
 
@@ -13,8 +14,9 @@ class Game
 {
 protected:
 	//共通のゲームプロパティ
-	Graphics *graphics;			//グラフィックスへのポインタ
+	Graphics *graphics;			//Graphicsへのポインタ
 	Input *input;				//Inputへのポインタ
+	Audio *audio;				//Audioへのポインタ
 	HWND hwnd;					//ウィンドウハンドル
 	HRESULT hr;					//標準の戻り型
 	LARGE_INTEGER timeStart;	//パフォーマンスカウンターの開始値
@@ -62,6 +64,8 @@ public:
 	Input* getInput() { return input; }
 	//ゲームを終了
 	void exitGame() { PostMessage(hwnd, WM_DESTROY, 0, 0); }
+	//Audioへのポインタを戻す
+	Audio* getAudio() { return audio; }
 	
 	//純粋仮想関数の宣言
 	//これらの関数はGameを継承するクラス内で記述する

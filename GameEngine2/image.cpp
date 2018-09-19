@@ -117,7 +117,7 @@ void Image::update(float frameTime)
 		{
 			animTimer -= frameDelay;
 			currentFrame++;
-			if (currentFrame<startFrame || currentFrame>endFrame)
+			if (currentFrame < startFrame || currentFrame > endFrame)
 			{
 				if (loop == true)									//ループするアニメーションの場合
 					currentFrame = startFrame;
@@ -137,7 +137,7 @@ void Image::setCurrentFrame(int c)
 {
 	if (c >= 0)
 	{
-		currentFrame = 1;
+		currentFrame = c;
 		animComplete = false;
 		setRect();				//spriteData.rectを設定
 	}

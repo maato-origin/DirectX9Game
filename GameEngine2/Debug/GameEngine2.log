@@ -1,4 +1,2 @@
-﻿  spaceWar.cpp
-c:\users\maato tanaka\documents\visual studio 2017\projects\gameengine2\image.h(53): warning C4244: 'return': 'int' から 'float' への変換です。データが失われる可能性があります。
-c:\users\maato tanaka\documents\visual studio 2017\projects\gameengine2\image.h(56): warning C4244: 'return': 'int' から 'float' への変換です。データが失われる可能性があります。
+﻿  audio.cpp
   GameEngine2.vcxproj -> C:\Users\maato tanaka\Documents\Visual Studio 2017\Projects\GameEngine2\Debug\GameEngine2.exe

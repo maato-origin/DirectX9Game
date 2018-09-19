@@ -12,10 +12,11 @@ Graphics::Graphics()
 {
     direct3d = NULL;
     device3d = NULL;
+	sprite = NULL;
     fullscreen = false;
     width = GAME_WIDTH;    // width & height are replaced in initialize()
     height = GAME_HEIGHT;
-    backColor = SETCOLOR_ARGB(255,0,0,128); // dark blue
+    backColor = graphicsNS::BACK_COLOR; // dark blue
 }
 
 //=============================================================================
@@ -31,6 +32,7 @@ Graphics::~Graphics()
 //=============================================================================
 void Graphics::releaseAll()
 {
+	SAFE_RELEASE(sprite);
     SAFE_RELEASE(device3d);
     SAFE_RELEASE(direct3d);
 }

@@ -35,7 +35,7 @@ void SpaceWar::initialize(HWND hwnd)
 	ship1.setCurrentFrame(shipNS::SHIP1_START_FRAME);							//開始フレーム
 	ship1.setX(GAME_WIDTH / 4);													//惑星の左上から出発
 	ship1.setY(GAME_HEIGHT / 4);
-	ship1.setVelocity(VECTOR2(shipNS::SPEED, -shipNS::SPEED));
+	ship1.setVelocity(VECTOR2(shipNS::SPEED, -shipNS::SPEED));					//VECTOR2(X, Y)
 
 	//宇宙船2
 	if (!ship2.initialize(this, shipNS::WIDTH, shipNS::HEIGHT, shipNS::TEXTURE_COLS, &gameTextures))
@@ -44,7 +44,7 @@ void SpaceWar::initialize(HWND hwnd)
 	ship2.setCurrentFrame(shipNS::SHIP2_START_FRAME);							//開始フレーム
 	ship2.setX(GAME_WIDTH - GAME_WIDTH / 4);									//惑星の左上から出発
 	ship2.setY(GAME_HEIGHT / 4);
-	ship2.setVelocity(VECTOR2(-shipNS::SPEED, -shipNS::SPEED));
+	ship2.setVelocity(VECTOR2(-shipNS::SPEED, -shipNS::SPEED));					//VECTOR2(X, Y)
 
 	return;
 }
@@ -95,6 +95,7 @@ void SpaceWar::ai()
 void SpaceWar::collisions()
 {
 	VECTOR2 collisionVector;
+	VECTOR2 minuscollisionVector=collisionVector*-1;
 	//宇宙船と惑星の衝突の場合
 	if (ship1.collidesWith(planet, collisionVector))
 	{
@@ -116,7 +117,7 @@ void SpaceWar::collisions()
 		ship1.bounce(collisionVector, ship2);
 		ship1.damage(SHIP);
 		//ship2のcollisionVectorの方向を変更する
-		ship2.bounce(collisionVector*-1, ship1);
+		ship2.bounce(minuscollisionVector, ship1);
 		ship2.damage(SHIP);
 	}
 }

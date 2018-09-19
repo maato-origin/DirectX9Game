@@ -86,13 +86,26 @@ void Game::initialize(HWND hw)
 {
 	hwnd = hw;		//ウィンドウハンドルを保存
 
-	//グラフィックスを初期化
+	//graphicsを初期化
 	graphics = new Graphics();
 	//GameErrorをスロー
 	graphics->initialize(hwnd, GAME_WIDTH, GAME_HEIGHT, FULLSCREEN);
 
 	//入力を初期化、マウスはキャプチャしない
 	input->initialize(hwnd, false);			//GameErrorをスロー
+
+	//サウンドシステムを初期化
+	audio = new Audio();
+	if (*WAVE_BANK != '\0' && *SOUND_BANK != '\0')		//サウンドファイルが定義されている場合
+	{
+		if (FAILED(hr = audio->initialize()))
+		{
+			if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize sound system because media file not found."));
+			else
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize sound system."));
+		}
+	}
 
 	//高分解能タイマーの準備を試みる
 	if (QueryPerformanceFrequency(&timerFreq) == false)
@@ -201,6 +214,16 @@ void Game::run(HWND hwnd)
 
 	input->readControllers();						//コントローラの状態を読み取る
 
+	audio->run();									//サウンドエンジンの周期的タスクを実行
+
+	//Alt+Enterでフルスクリーンかウィンドウモードを変更
+	if (input->isKeyDown(ALT_KEY) && input->wasKeyPressed(ENTER_KEY))
+		setDisplayMode(graphicsNS::TOGGLE);
+
+	//Escキーでウィンドウモードに設定
+	if (input->isKeyDown(ESC_KEY))
+		setDisplayMode(graphicsNS::WINDOW);
+
 	//入力をクリア
 	//全てのキーチェック完了後これを呼び出す
 	input->clear(inputNS::KEYS_PRESSED);
@@ -215,6 +238,7 @@ void Game::resetAll()
 void Game::deleteAll()
 {
 	releaseAll();
+	SAFE_DELETE(audio);
 	SAFE_DELETE(graphics);
 	SAFE_DELETE(input);
 	initialized = false;

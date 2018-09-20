@@ -24,6 +24,7 @@ protected:
 	LARGE_INTEGER timerFreq;		//パフォーマンスカウンターの周波数
 	float frameTime;			//最後のフレームに要した時間
 	float fps;					//フレームレート
+	bool fpsOn;					//trueで画面にfpsを表示
 	DWORD sleepTime;			//フレーム間でスリープする時間
 	bool paused;				//ゲームが一時停止されている場合 true
 	bool initialized;

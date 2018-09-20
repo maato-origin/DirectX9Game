@@ -175,6 +175,113 @@ HRESULT Graphics::loadTexture(const char *filename, COLOR_ARGB transcolor, UINT 
 	return result;
 }
 
+//テクスチャをシステムメモリへ読み込む(システムメモリはロック可能)
+//ピクセルデータへの直接アクセスを可能にする
+//実行前：filenameはテクスチャファイルの名前
+//transcolorは透明として扱う色
+//実行後：widthとheight=テクスチャの寸法
+//textureはテクスチャを指す
+//HRESULTを戻し、TextureData構造体にデータを格納する
+HRESULT Graphics::loadTextureSystemMem(const char *filename, COLOR_ARGB transcolor, UINT &width, UINT &height, LP_TEXTURE &texture)
+{
+	//ビットマップファイル情報を読み取るための構造体
+	D3DXIMAGE_INFO info;
+	result = E_FAIL;		//標準のWindows戻り値
+
+	try {
+		if (filename == NULL)
+		{
+			texture = NULL;
+			return D3DERR_INVALIDCALL;
+		}
+
+		//幅と高さをビットマップファイルから取得
+		result = D3DXGetImageInfoFromFile(filename, &info);
+		if (result != D3D_OK)
+			return result;
+		width = info.Width;
+		height = info.Height;
+
+		//ビットマップ画像ファイルを読み込んで、新しいテクスチャを作成
+		result = D3DXCreateTextureFromFileEx(
+			device3d,			//3Dデバイス
+			filename,			//ビットマップファイルの名前
+			info.Width,			//ビットマップ画像の幅
+			info.Height,		//ビットマップ画像の高さ
+			1,					//ミップマップのレベル
+			0,					//使用方法
+			D3DFMT_UNKNOWN,		//サーフェイスフォーマット
+			D3DPOOL_SYSTEMMEM,	//システムメモリはロック可能
+			D3DX_DEFAULT,		//画像フィルタ
+			D3DX_DEFAULT,		//ミップフィルタ
+			transcolor,			//透明用の色キー
+			&info,				//ビットマップファイル情報
+			NULL,				//カラーパレット
+			&texture);			//目的のテクスチャ
+	}
+	catch(...){
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Erro in Graphics::loadTexture"));
+	}
+
+	return result;
+}
+
+//=============================================================================
+// Create a vertex buffer.
+// Pre: verts[] contains vertex data.
+//      size = size of verts[]
+// Post: &vertexBuffer points to buffer if successful.
+//=============================================================================
+HRESULT Graphics::createVertexBuffer(VertexC verts[], UINT size, LP_VERTEXBUFFER &vertexBuffer)
+{
+	// Standard Windows return value
+	HRESULT result = E_FAIL;
+
+	// Create a vertex buffer
+	result = device3d->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, D3DFVF_VERTEX,
+		D3DPOOL_DEFAULT, &vertexBuffer, NULL);
+	if (FAILED(result))
+		return result;
+
+	void *ptr;
+	// must lock buffer before data can be transferred in
+	result = vertexBuffer->Lock(0, size, (void**)&ptr, 0);
+	if (FAILED(result))
+		return result;
+	memcpy(ptr, verts, size);   // copy vertex data into buffer
+	vertexBuffer->Unlock();     // unlock buffer
+
+	return result;
+}
+
+//=============================================================================
+// Display a quad with alpha transparency using Triangle Fan
+// Pre: createVertexBuffer was used to create vertexBuffer containing four
+//      vertices defining the quad in clockwise order.
+//      g3ddev->BeginScene was called
+// Post: Quad is drawn
+//=============================================================================
+bool Graphics::drawQuad(LP_VERTEXBUFFER vertexBuffer)
+{
+	HRESULT result = E_FAIL;    // standard Windows return value
+
+	if (vertexBuffer == NULL)
+		return false;
+
+	device3d->SetRenderState(D3DRS_ALPHABLENDENABLE, true); // enable alpha blend
+
+	device3d->SetStreamSource(0, vertexBuffer, 0, sizeof(VertexC));
+	device3d->SetFVF(D3DFVF_VERTEX);
+	result = device3d->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
+
+	device3d->SetRenderState(D3DRS_ALPHABLENDENABLE, false); // alpha blend off
+
+	if (FAILED(result))
+		return false;
+
+	return true;
+}
+
 //=============================================================================
 // Display the backbuffer
 //=============================================================================

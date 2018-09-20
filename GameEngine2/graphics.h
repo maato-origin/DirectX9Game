@@ -21,6 +21,9 @@
 #define LP_3DDEVICE LPDIRECT3DDEVICE9
 #define LP_3D       LPDIRECT3D9
 #define VECTOR2 D3DXVECTOR2
+#define LP_VERTEXBUFFER LPDIRECT3DVERTEXBUFFER9
+#define LP_DXFONT LPD3DXFONT
+#define LP_VERTEXBUFFER LPDIRECT3DVERTEXBUFFER9
 
 // Color defines
 #define COLOR_ARGB DWORD
@@ -58,6 +61,15 @@ namespace graphicsNS
 
 	enum DISPLAY_MODE { TOGGLE, FULLSCREEN, WINDOW };
 }
+
+struct VertexC
+{
+	float x, y, z;
+	float rhw;
+	unsigned long color;
+};
+
+#define D3DFVF_VERTEX (D3DFVF_XYZRHW|D3DFVF_DIFFUSE)
 
 //SpriteData：スプライトを描画するGraphics::drawSpriteが必要とするプロパティ
 struct SpriteData
@@ -116,6 +128,14 @@ public:
 	//HRESULTを戻す
 	HRESULT loadTexture(const char*filename, COLOR_ARGB transcolor, UINT &width, UINT &height, LP_TEXTURE &texture);
 
+	//テクスチャをシステムメモリへ読み込む(システムメモリはロック可能)
+	//ピクセルデータへの直接アクセスを可能にする
+	//実行前：filenameはテクスチャファイルの名前
+	//transcolorは透明として扱う色
+	//実行後：widthとheight=テクスチャの寸法
+	//textureはテクスチャを指す
+	HRESULT loadTextureSystemMem(const char *filename, COLOR_ARGB transcolor, UINT &width, UINT &height, LP_TEXTURE &texture);
+
     // Initialize DirectX graphics
     // Throws GameError on error
     // Pre: hw = handle to window
@@ -123,6 +143,18 @@ public:
     //      height = height in pixels
     //      fullscreen = true for full screen, false for window
     void    initialize(HWND hw, int width, int height, bool fullscreen);
+
+	// Create a vertex buffer.
+	// Pre: verts[] contains vertex data.
+	//      size = size of verts[]
+	// Post: &vertexBuffer points to buffer if successful.
+	HRESULT createVertexBuffer(VertexC verts[], UINT size, LP_VERTEXBUFFER &vertexBuffer);
+
+	// Display a quad (rectangle) with alpha transparency.
+	// Pre: createVertexBuffer was used to create vertexBuffer containing four
+	//      vertices defining the quad in clockwise order.
+	//      g3ddev->BeginScene was called
+	bool drawQuad(LP_VERTEXBUFFER vertexBuffer);
 
     // Display the offscreen backbuffer to the screen.
     HRESULT showBackbuffer();

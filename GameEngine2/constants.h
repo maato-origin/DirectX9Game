@@ -30,6 +30,7 @@
 //graphic images
 const char NEBULA_IMAGE[] = "pictures\\orion.jpg";
 const char TEXTURES_IMAGE[] = "pictures\\textures.png";
+const char FONT_IMAGE[] = "pictures\\CKfont.png";
 
 // window
 const char CLASS_NAME[] = "Spacewar";
@@ -67,6 +68,7 @@ const char NOLIMIT1[] = "NoLimit";
 // key mappings
 // In this game simple constants are used for key mappings. If variables were used
 // it would be possible to save and restore key mappings from a data file.
+const UCHAR CONSOLE_KEY = VK_OEM_3;		//@ key for japan
 const UCHAR ESC_KEY      = VK_ESCAPE;   // escape key
 const UCHAR ALT_KEY      = VK_MENU;     // Alt key
 const UCHAR ENTER_KEY    = VK_RETURN;   // Enter key

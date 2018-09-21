@@ -66,6 +66,12 @@
     <ClInclude Include="threeCsDX.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="console.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="plane.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
@@ -111,6 +117,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="textDX.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="console.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="plane.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

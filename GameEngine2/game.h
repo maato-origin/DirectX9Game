@@ -8,7 +8,16 @@
 #include "input.h"
 #include "audio.h"
 #include "constants.h"
+#include "textDX.h"
+#include "console.h"
 #include "gameError.h"
+
+namespace gameNS
+{
+	const char FONT[] = "Courier New";	//フォント
+	const int POINT_SIZE = 14;			//文字サイズ
+	const COLOR_ARGB FONT_COLOR = SETCOLOR_ARGB(255, 255, 255, 255);
+}
 
 class Game
 {
@@ -17,6 +26,7 @@ protected:
 	Graphics *graphics;			//Graphicsへのポインタ
 	Input *input;				//Inputへのポインタ
 	Audio *audio;				//Audioへのポインタ
+	Console *console;			//Consoleへのポインタ
 	HWND hwnd;					//ウィンドウハンドル
 	HRESULT hr;					//標準の戻り型
 	LARGE_INTEGER timeStart;	//パフォーマンスカウンターの開始値
@@ -24,10 +34,12 @@ protected:
 	LARGE_INTEGER timerFreq;		//パフォーマンスカウンターの周波数
 	float frameTime;			//最後のフレームに要した時間
 	float fps;					//フレームレート
+	TextDX dxFont;				//fps用に使うDirectXフォント
 	bool fpsOn;					//trueで画面にfpsを表示
 	DWORD sleepTime;			//フレーム間でスリープする時間
 	bool paused;				//ゲームが一時停止されている場合 true
 	bool initialized;
+	std::string command;		//コンソールコマンド
 
 public:
 	//コンストラクタ
@@ -51,6 +63,10 @@ public:
 	virtual void resetAll();
 	//予約されていたメモリをすべて削除
 	virtual void deleteAll();
+
+	//コンソールコマンドの手続き
+	virtual void consoleCommand();
+
 	//ゲームアイテムをレンダー
 	virtual void renderGame();
 	//消失したグラフィックスデバイスを処理

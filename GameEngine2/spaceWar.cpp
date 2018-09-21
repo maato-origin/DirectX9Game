@@ -2,7 +2,11 @@
 
 //コンストラクタ
 SpaceWar::SpaceWar()
-{}
+{
+	menuOn = true;
+	countDownOn = false;
+	roundOver = false;
+}
 
 //デストラクタ
 SpaceWar::~SpaceWar()
@@ -15,76 +19,158 @@ SpaceWar::~SpaceWar()
 void SpaceWar::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);	//GameErrorをスロー
-	//星雲のテクスチャ
-	if (!nebulaTexture.initialize(graphics, NEBULA_IMAGE))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing nebula texture"));
-	//メインのゲームテクスチャ
-	if (!gameTextures.initialize(graphics, TEXTURES_IMAGE))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing planet texture"));
-	//星雲
-	if (!nebula.initialize(graphics, 0, 0, 0, &nebulaTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing nebula"));
+
+	//DirectXフォントを初期化
+	fontBig.initialize(graphics, spacewarNS::FONT_BIG_SIZE, false, false, spacewarNS::FONT);
+	fontBig.setFontColor(spacewarNS::FONT_COLOR);
+
+	//メニューのテクスチャ
+	if (!menuTexture.initialize(graphics, MENU_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu texture"));
+	//星空のテクスチャ
+	if (!spaceTexture.initialize(graphics, SPACE_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing space texture"));
+	//ゲームのテクスチャ
+	if (!textures1.initialize(graphics, TEXTURES1_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing game texture"));
+
+	//メニューの画像
+	if (!menu.initialize(graphics, 0, 0, 0, &menuTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu"));
+
+	//星空の画像
+	if (!space.initialize(graphics, 0, 0, 0, &spaceTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing space"));
+	space.setScale((float)SPACE_SCALE);
+
+	//月の画像群
+	for (int i = 0; i < 4; i++)
+	{
+		if (!moons[i].initialize(graphics, MOON_SIZE, MOON_SIZE, 4, &textures1))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing moons"));
+		moons[i].setFrames(MOON1_FRAME + i, MOON1_FRAME + i);
+		moons[i].setCurrentFrame(MOON1_FRAME + i);
+		//月は中央で開始
+		moons[i].setX(GAME_WIDTH / 2 - MOON_SIZE / 2);
+		moons[i].setY(GAME_HEIGHT / 2 - MOON_SIZE / 2);
+	}
+
 	//惑星
-	if (!planet.initialize(this, planetNS::WIDTH, planetNS::HEIGHT, 2, &gameTextures))
+	if (!planet.initialize(graphics, PLANET_SIZE, PLANET_SIZE, 2, &textures1))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing planet"));
+	planet.setFrames(PLANET_FRAME, PLANET_FRAME);
+	planet.setCurrentFrame(PLANET_FRAME);
+	//惑星は中央で開始
+	planet.setX(GAME_WIDTH / 2 - PLANET_SIZE / 2);
+	planet.setY(GAME_HEIGHT / 2 - PLANET_SIZE / 2);
 
 	//宇宙船1
-	if (!ship1.initialize(this, shipNS::WIDTH, shipNS::HEIGHT, shipNS::TEXTURE_COLS, &gameTextures))
+	if (!ship1.initialize(this, shipNS::WIDTH, shipNS::HEIGHT, shipNS::TEXTURE_COLS, &textures1))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing ship1"));
 	ship1.setFrames(shipNS::SHIP1_START_FRAME, shipNS::SHIP1_END_FRAME);		//アニメーションのフレーム
 	ship1.setCurrentFrame(shipNS::SHIP1_START_FRAME);							//開始フレーム
-	ship1.setX(GAME_WIDTH / 4);													//惑星の左上から出発
-	ship1.setY(GAME_HEIGHT / 4);
-	ship1.setVelocity(VECTOR2(shipNS::SPEED, -shipNS::SPEED));					//VECTOR2(X, Y)
+	ship1.setColorFilter(SETCOLOR_ARGB(255, 230, 230, 255));
+	ship1.setMass(shipNS::MASS);
+	ship1.setX(GAME_WIDTH / 2 - shipNS::WIDTH);
+	ship1.setY(GAME_HEIGHT / 2 - shipNS::HEIGHT);
+}
 
-	//宇宙船2
-	if (!ship2.initialize(this, shipNS::WIDTH, shipNS::HEIGHT, shipNS::TEXTURE_COLS, &gameTextures))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing ship2"));
-	ship2.setFrames(shipNS::SHIP2_START_FRAME, shipNS::SHIP2_END_FRAME);		//アニメーションのフレーム
-	ship2.setCurrentFrame(shipNS::SHIP2_START_FRAME);							//開始フレーム
-	ship2.setX(GAME_WIDTH - GAME_WIDTH / 4);									//惑星の左上から出発
-	ship2.setY(GAME_HEIGHT / 4);
-	ship2.setVelocity(VECTOR2(-shipNS::SPEED, -shipNS::SPEED));					//VECTOR2(X, Y)
+//新しいラウンドを開始する
+void SpaceWar::roundStart()
+{
+	space.setX(0);
+	space.setY(0);
 
-	return;
+	//宇宙船を中央で開始させる
+	ship1.setX(GAME_WIDTH / 2 - shipNS::WIDTH);
+	ship1.setY(GAME_HEIGHT / 2 - shipNS::HEIGHT);
+
+	ship1.setDegrees(0);
+	countDownTimer = spacewarNS::COUNT_DOWN;
+	countDownOn = true;
+	roundOver = false;
 }
 
 //全てのゲームアイテムを更新
 void SpaceWar::update()
 {
-	/*
-	if (input->isKeyDown(SHIP_RIGHT_KEY))						//右に移動する場合
+	if (menuOn)
 	{
-		ship1.setX(ship1.getX() + frameTime * SHIP_SPEED);
-		if (ship1.getX() > GAME_WIDTH)							//画面の右にはみ出す場合
-			ship1.setX((float)-ship1.getWidth());					//画面の左に配置
+		if (input->anyKeyPressed())
+		{
+			menuOn = false;
+			input->clearAll();
+			roundStart();
+		}
 	}
-
-	if (input->isKeyDown(SHIP_LEFT_KEY))						//左に移動する場合
+	else if (countDownOn)
 	{
-		ship1.setX(ship1.getX() - frameTime * SHIP_SPEED);
-		if (ship1.getX() < -ship1.getWidth())						//画面の左にはみ出す場合
-			ship1.setX((float)GAME_WIDTH);						//画面の右に配置
+		countDownTimer -= frameTime;
+		if (countDownTimer <= 0)
+			countDownOn = false;
 	}
-
-	if (input->isKeyDown(SHIP_UP_KEY))							//上に移動する場合
+	else
 	{
-		ship1.setY(ship1.getY() - frameTime * SHIP_SPEED);
-		if (ship1.getY() < -ship1.getHeight())						//画面の上にはみ出す場合
-			ship1.setY((float)GAME_HEIGHT);						//画面の下に配置
+		if (ship1.getActive())
+		{
+			if (input->isKeyDown(SHIP1_FORWARD_KEY) || input->getGamepadDPadUp(0))	//エンジンがオンの時
+			{
+				ship1.setEngineOn(true);
+				audio->playCue(ENGINE1);
+			}
+			else
+			{
+				ship1.setEngineOn(false);
+				audio->stopCue(ENGINE1);
+			}
+			ship1.rotate(shipNS::NONE);
+			if (input->isKeyDown(SHIP1_LEFT_KEY) || input->getGamepadDPadLeft(0))	//ship1が左に回転した場合
+				ship1.rotate(shipNS::LEFT);
+			if (input->isKeyDown(SHIP1_RIGHT_KEY) || input->getGamepadDPadLeft(0))	//ship1が右に回転した場合
+				ship1.rotate(shipNS::RIGHT);
+		}
+		if (roundOver)
+		{
+			roundTimer -= frameTime;
+			if (roundTimer <= 0)
+				roundStart();
+		}
 	}
-
-	if (input->isKeyDown(SHIP_DOWN_KEY))						//下に移動する場合
-	{
-		ship1.setY(ship1.getY() + frameTime * SHIP_SPEED);
-		if (ship1.getY() > GAME_HEIGHT)							//画面の下にはみ出す場合
-			ship1.setY((float)-ship1.getHeight());				//画面の上に配置
-	}
-	*/
-
-	planet.update(frameTime);
+	//パララックススクロール用にエンティティの位置を更新
 	ship1.update(frameTime);
-	ship2.update(frameTime);
+	//惑星をX方向に動かす
+	planet.setX(planet.getX() - frameTime * ship1.getVelocity().x);
+	//惑星をY方向に動かす
+	planet.setY(planet.getY() - frameTime * ship1.getVelocity().y);
+	planet.update(frameTime);
+
+	//衛星を動かす
+	for (int i = 0; i < 4; i++)
+	{
+		//スクロールの速さを衛星ごとに20%遅くする
+		moons[i].setX(moons[i].getX() - frameTime * ship1.getVelocity().x*0.2f*(4 - i));
+		moons[i].setY(moons[i].getY() - frameTime * ship1.getVelocity().y*0.2f*(4 - i));
+	}
+
+	//星空を宇宙船と反対のX方向に移動
+	space.setX(space.getX() - frameTime * ship1.getVelocity().x);
+	//星空を宇宙船と反対のY方向に移動
+	space.setY(space.getY() - frameTime * ship1.getVelocity().y);
+
+	//星空画像を端で繰り返す
+	if (space.getX() > 0)
+		//星空画像をSPACE_WIDTH分だけ左に動かす
+		space.setX(space.getX() - SPACE_WIDTH);
+	//星空画像が画面から外れて左にある場合
+	if (space.getX() < -SPACE_WIDTH)
+		//星空画像をSPACE_WIDTH分だけ右に動かす
+		space.setX(space.getX() + SPACE_WIDTH);
+	//星空の上端>画面の上端
+	if (space.getY() > 0)
+		space.setY(space.getY() - SPACE_HEIGHT);
+	//星空画像が画面から外れて上にある場合
+	if (space.getY() < -SPACE_HEIGHT)
+		space.setY(space.getY() + SPACE_HEIGHT);
 }
 
 //人工知能
@@ -94,43 +180,53 @@ void SpaceWar::ai()
 //衝突処理
 void SpaceWar::collisions()
 {
-	VECTOR2 collisionVector;
-	VECTOR2 minuscollisionVector=collisionVector*-1;
-	//宇宙船と惑星の衝突の場合
-	if (ship1.collidesWith(planet, collisionVector))
-	{
-		//惑星から跳ね返る
-		ship1.bounce(collisionVector, planet);
-		ship1.damage(PLANET);
-	}
-	if (ship2.collidesWith(planet, collisionVector))
-	{
-		//惑星から跳ね返る
-		ship2.bounce(collisionVector, planet);
-		ship2.damage(PLANET);
-	}
 
-	//宇宙船同士の衝突の場合
-	if (ship1.collidesWith(ship2, collisionVector))
-	{
-		//宇宙船から跳ね返る
-		ship1.bounce(collisionVector, ship2);
-		ship1.damage(SHIP);
-		//ship2のcollisionVectorの方向を変更する
-		ship2.bounce(minuscollisionVector, ship1);
-		ship2.damage(SHIP);
-	}
 }
 
 //ゲームアイテムをレンダー
 void SpaceWar::render()
 {
+	float x = space.getX();
+	float y = space.getY();
+
 	graphics->spriteBegin();	//スプライトの描画を開始
 	
-	nebula.draw();				//星雲をシーンに追加
-	planet.draw();				//惑星をシーンに追加
-	ship1.draw();				//宇宙船1をシーンに追加
-	ship2.draw();				//宇宙船2をシーンに追加
+	
+	//星空画像を端で繰り返す
+	space.draw();				//現在の位置で描画
+
+	//星空画像の右端が見える場合
+	if (space.getX() < -SPACE_WIDTH + (int)GAME_WIDTH)
+	{
+		space.setX(space.getX() + SPACE_WIDTH);		//左端に戻る
+		space.draw();								//再描画
+	}
+	//星空画像の下端が見える場合
+	if (space.getY() < -SPACE_HEIGHT + (int)GAME_HEIGHT)
+	{
+		space.setY(space.getY() + SPACE_HEIGHT);	//上端に戻る
+		space.draw();								//再描画
+		space.setX(x);								//x位置を復元
+		//星空画像の右端が見える場合、左端に戻る
+		if (space.getX() < -SPACE_WIDTH + (int)GAME_WIDTH)
+			space.draw();							//再描画
+	}
+	space.setX(x);									//x位置を復元
+	space.setY(y);									//y位置を復元
+
+	for (int i = 3; i >= 0; i--)
+		moons[i].draw();							//奥から手前に衛星の描画
+	planet.draw();									//惑星の描画
+
+	ship1.draw();									//宇宙船を描画
+
+	if (menuOn)
+		menu.draw();
+	if (countDownOn)
+	{
+		_snprintf_s(buffer, spacewarNS::BUF_SIZE, "%d", (int)(ceil(countDownTimer)));
+		fontBig.print(buffer, spacewarNS::COUNT_DOWN_X, spacewarNS::COUNT_DOWN_Y);
+	}
 
 	graphics->spriteEnd();		//スプライトの描画を終了
 }
@@ -140,8 +236,11 @@ void SpaceWar::render()
 //予約されていたビデオメモリを全て解放
 void SpaceWar::releaseAll()
 {
-	nebulaTexture.onLostDevice();
-	gameTextures.onLostDevice();
+	menuTexture.onLostDevice();
+	spaceTexture.onLostDevice();
+	textures1.onLostDevice();
+	fontScore.onLostDevice();
+	fontBig.onLostDevice();
 	Game::releaseAll();
 	return;
 }
@@ -150,8 +249,11 @@ void SpaceWar::releaseAll()
 //全てのサーフェイスを再作成
 void SpaceWar::resetAll()
 {
-	gameTextures.onResetDevice();
-	nebulaTexture.onResetDevice();
+	fontBig.onResetDevice();
+	fontScore.onResetDevice();
+	textures1.onResetDevice();
+	spaceTexture.onResetDevice();
+	menuTexture.onResetDevice();
 	Game::resetAll();
 	return;
 }

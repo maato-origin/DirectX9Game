@@ -226,55 +226,50 @@ HRESULT Graphics::loadTextureSystemMem(const char *filename, COLOR_ARGB transcol
 	return result;
 }
 
-//=============================================================================
-// Create a vertex buffer.
-// Pre: verts[] contains vertex data.
-//      size = size of verts[]
-// Post: &vertexBuffer points to buffer if successful.
-//=============================================================================
+//頂点バッファを作成
+//実行前：verts[]に頂点データを格納
+//size=verts[]のサイズ
+//実行後：成功した場合、&vertexBufferがバッファを指す
 HRESULT Graphics::createVertexBuffer(VertexC verts[], UINT size, LP_VERTEXBUFFER &vertexBuffer)
 {
-	// Standard Windows return value
+	//標準のWindows戻り値
 	HRESULT result = E_FAIL;
 
-	// Create a vertex buffer
+	//頂点バッファを作成
 	result = device3d->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, D3DFVF_VERTEX,
 		D3DPOOL_DEFAULT, &vertexBuffer, NULL);
 	if (FAILED(result))
 		return result;
 
 	void *ptr;
-	// must lock buffer before data can be transferred in
+	//データ転送前にバッファをロック
 	result = vertexBuffer->Lock(0, size, (void**)&ptr, 0);
 	if (FAILED(result))
 		return result;
-	memcpy(ptr, verts, size);   // copy vertex data into buffer
-	vertexBuffer->Unlock();     // unlock buffer
+	memcpy(ptr, verts, size);   //頂点データをバッファにコピー
+	vertexBuffer->Unlock();     //バッファのロックを解除
 
 	return result;
 }
 
-//=============================================================================
-// Display a quad with alpha transparency using Triangle Fan
-// Pre: createVertexBuffer was used to create vertexBuffer containing four
-//      vertices defining the quad in clockwise order.
-//      g3ddev->BeginScene was called
-// Post: Quad is drawn
-//=============================================================================
+//三角形ファンを使って、アルファ透過性を持つ四角形を表示
+//実行前：createVertexBufferを使ってvertexBufferを作成し、四角形を
+//時計回りの順序で定義する4つの頂点を格納しておく
+//実行後：四角形が描画される
 bool Graphics::drawQuad(LP_VERTEXBUFFER vertexBuffer)
 {
-	HRESULT result = E_FAIL;    // standard Windows return value
+	HRESULT result = E_FAIL;    //標準のWindowsの戻り値
 
 	if (vertexBuffer == NULL)
 		return false;
 
-	device3d->SetRenderState(D3DRS_ALPHABLENDENABLE, true); // enable alpha blend
+	device3d->SetRenderState(D3DRS_ALPHABLENDENABLE, true); //アルファブレンドを有効化
 
 	device3d->SetStreamSource(0, vertexBuffer, 0, sizeof(VertexC));
 	device3d->SetFVF(D3DFVF_VERTEX);
 	result = device3d->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
 
-	device3d->SetRenderState(D3DRS_ALPHABLENDENABLE, false); // alpha blend off
+	device3d->SetRenderState(D3DRS_ALPHABLENDENABLE, false); //アルファブレンドを無効化
 
 	if (FAILED(result))
 		return false;
@@ -393,14 +388,19 @@ HRESULT Graphics::getDeviceState()
     return result;
 }
 
-//=============================================================================
-// Reset the graphics device
-//=============================================================================
+//グラフィックスデバイスをリセット
 HRESULT Graphics::reset()
 {
-    result = E_FAIL;    // default to fail, replace on success
-    initD3Dpp();                        // init D3D presentation parameters
-    result = device3d->Reset(&d3dpp);   // attempt to reset graphics device
+    result = E_FAIL;    //失敗をデフォルトとし、成功時に置き換え
+    initD3Dpp();                        //D3Dプレゼンテーションパラメータを初期化
+	sprite->OnLostDevice();
+    result = device3d->Reset(&d3dpp);   //グラフィックスデバイスのリセット
+
+	//プリミティブのアルファブレンド用の構成
+	device3d->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	device3d->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	device3d->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
     return result;
 }
 

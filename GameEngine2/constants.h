@@ -28,9 +28,12 @@
 //                  Constants
 //-----------------------------------------------
 //graphic images
-const char NEBULA_IMAGE[] = "pictures\\orion.jpg";
-const char TEXTURES_IMAGE[] = "pictures\\textures.png";
+const char SPACE_IMAGE[] = "pictures\\space.jpg";
+const char TEXTURES1_IMAGE[] = "pictures\\textures1.png";
+const char MENU_IMAGE[] = "pictures\\menu.png";
 const char FONT_IMAGE[] = "pictures\\CKfont.png";
+const char OCEAN_IMAGE[] = "pictures\\ocean.jpg";
+const char TEXTURES_IMAGE[] = "pictures\\textures.png";
 
 // window
 const char CLASS_NAME[] = "Spacewar";
@@ -45,25 +48,30 @@ const float FRAME_RATE  = 120.0f;               // the target frame rate (frames
 const float MIN_FRAME_RATE = 30.0f;             // the minimum frame rate
 const float MIN_FRAME_TIME = 1.0f/FRAME_RATE;   // minimum desired time for 1 frame
 const float MAX_FRAME_TIME = 1.0f/MIN_FRAME_RATE; // maximum time used in calculations
-const float GRAVITY = 6.67428e-11f;				//gravitational constant
-const float MASS_PLANET = 1.0e14f;
-const float MASS_SHIP = 5.0f;
+const float FULL_HEALTH = 100;
+const int SPACE_SCALE = 2;
+const int SPACE_WIDTH = 640 * SPACE_SCALE;
+const int SPACE_HEIGHT = 480 * SPACE_SCALE;
+const int PLANET_SIZE = 128;
+const int PLANET_FRAME = 1;
+const UINT MOON_SIZE = 64;
+const UINT MOON1_FRAME = 12;
 
 //audio files required by audio.cpp
 //WAVE_BANK must be location of .xwb file.
-const char WAVE_BANK[] = "audio\\Win\\WavesExample1.xwb";
+const char WAVE_BANK[] = "audio\\Win\\WaveBank.xwb";
 //SOUND_BANK must be location of .xsb file.
-const char SOUND_BANK[] = "audio\\Win\\SoundsExample1.xsb";
+const char SOUND_BANK[] = "audio\\Win\\SoundBank.xsb";
 
 //audio cues
-const char BEEP1[] = "beep1";
-const char BEEP2[] = "beep2";
-const char BEEP3[] = "beep3";
-const char BEEP4[] = "beep4";
-const char HIT[] = "beep4";
-
-const char LIMIT1[] = "Limit1";
-const char NOLIMIT1[] = "NoLimit";
+const char CHEER[] = "cheer";
+const char COLLIDE[] = "colilde";
+const char EXPLODE[] = "explode";
+const char ENGINE1[] = "engine1";
+const char ENGINE2[] = "engine2";
+const char TORPED_CRASH[] = "torpedoCrash";
+const char TORPED_FIRE[] = "torpedoFire";
+const char TORPED_HIT[] = "torpedoHit";
 
 // key mappings
 // In this game simple constants are used for key mappings. If variables were used
@@ -72,10 +80,11 @@ const UCHAR CONSOLE_KEY = VK_OEM_3;		//@ key for japan
 const UCHAR ESC_KEY      = VK_ESCAPE;   // escape key
 const UCHAR ALT_KEY      = VK_MENU;     // Alt key
 const UCHAR ENTER_KEY    = VK_RETURN;   // Enter key
-const UCHAR SHIP_LEFT_KEY = VK_LEFT;	//left arrow
-const UCHAR SHIP_RIGHT_KEY = VK_RIGHT;	//right arrow
-const UCHAR SHIP_UP_KEY = VK_UP;		//up arrow
-const UCHAR SHIP_DOWN_KEY = VK_DOWN;	//down arrow
+const UCHAR SHIP1_LEFT_KEY = VK_LEFT;	//left arrow
+const UCHAR SHIP1_RIGHT_KEY = VK_RIGHT;	//right arrow
+const UCHAR SHIP1_FORWARD_KEY = VK_UP;		//up arrow
+const UCHAR SHIP1_FIRE_KEY = VK_DOWN;	//down arrow
+
 
 //weapon types
 enum WEAPON { TORPEDO, SHIP, PLANET };

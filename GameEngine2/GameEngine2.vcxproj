@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />
+    <ClInclude Include="console.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
@@ -130,6 +131,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="plane.h" />
     <ClInclude Include="planet.h" />
     <ClInclude Include="ship.h" />
     <ClInclude Include="spaceWar.h" />
@@ -141,11 +143,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
+    <ClCompile Include="console.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="plane.cpp" />
     <ClCompile Include="planet.cpp" />
     <ClCompile Include="ship.cpp" />
     <ClCompile Include="spaceWar.cpp" />

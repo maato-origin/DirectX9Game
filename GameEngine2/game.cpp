@@ -7,6 +7,10 @@ Game::Game()
 	//その他の初期化は後でinput->initialize()を呼び出して処理
 	paused = false;				//ゲームは一時停止中ではない
 	graphics = NULL;
+	audio = NULL;
+	console = NULL;
+	fps = 100;
+	fpsOn = false;				//デフォルトではフレームレートは非表示
 	initialized = false;
 }
 
@@ -94,6 +98,16 @@ void Game::initialize(HWND hw)
 	//入力を初期化、マウスはキャプチャしない
 	input->initialize(hwnd, false);			//GameErrorをスロー
 
+	//コンソールの初期化
+	console = new Console();
+	console->initialize(graphics, input);	//コンソールの準備
+	console->print("---Console---");
+
+	//DirectXフォントを初期化
+	if (dxFont.initialize(graphics, gameNS::POINT_SIZE, false, false, gameNS::FONT) == false)
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize DirectX font."));
+	dxFont.setFontColor(gameNS::FONT_COLOR);
+
 	//サウンドシステムを初期化
 	audio = new Audio();
 	if (*WAVE_BANK != '\0' && *SOUND_BANK != '\0')		//サウンドファイルが定義されている場合
@@ -119,12 +133,26 @@ void Game::initialize(HWND hw)
 //ゲームアイテムをレンダー
 void Game::renderGame()
 {
+	const int BUF_SIZE = 20;
+	static char buffer[BUF_SIZE];
+
 	//レンダリングを開始
 	if (SUCCEEDED(graphics->beginScene()))
 	{
 		//renderは継承したクラス側で記述する必要がある純粋仮想関数
 		render();			//派生クラスのrender()を呼び出す
 
+		graphics->spriteBegin();	//スプライトの描画を開始
+		if (fpsOn)
+		{
+			//fpsをCstringに変換
+			_snprintf_s(buffer, BUF_SIZE, "fps %d ", (int)fps);
+			dxFont.print(buffer, GAME_WIDTH - 100, GAME_HEIGHT - 28);
+		}
+		graphics->spriteEnd();		//スプライトの描画を終了
+		console->draw();			//コンソールはゲームの前面に表示するように描画
+
+		//レンダリングを終了
 		graphics->endScene();
 	}
 	handleLostGraphicsDevice();
@@ -212,6 +240,15 @@ void Game::run(HWND hwnd)
 	}
 	renderGame();									//全てのゲームアイテム描画
 
+	//コンソールキーをチェック
+	if (input->wasKeyPressed(CONSOLE_KEY))
+	{
+		console->showHide();
+		//コンソールが表示されている間、ゲームを一時停止
+		paused = console->getVisible();
+	}
+	consoleCommand();								//ユーザーが入力したコンソールコマンドを処理
+
 	input->readControllers();						//コントローラの状態を読み取る
 
 	audio->run();									//サウンドエンジンの周期的タスクを実行
@@ -229,17 +266,57 @@ void Game::run(HWND hwnd)
 	input->clear(inputNS::KEYS_PRESSED);
 }
 
+//コンソールコマンドを処理
+//新しいコンソールコマンドを追加する場合は
+//この関数を派生クラスでオーバーライド
+void Game::consoleCommand()
+{
+	command = console->getCommand();		//コンソールからのコマンドを取得
+	if (command == "")						//コマンドがない場合
+		return;
+
+	if (command == "help")					//helpコマンド
+	{
+		console->print("Console Command");
+		console->print("fps - toggle display of frames per second");
+		return;
+	}
+
+	if (command == "fps")
+	{
+		fpsOn = !fpsOn;						//フレームレートの表示切替
+		if (fpsOn)
+			console->print("fps On");
+		else
+			console->print("fps Off");
+	}
+}
+
+//グラフィックスデバイスが消失した時
+//グラフィックスデバイスをリセット可能にするため、
+//予約されていたビデオメモリを全て解放
 void Game::releaseAll()
-{}
+{
+	SAFE_ON_LOST_DEVICE(console);
+	dxFont.onLostDevice();
+	return;
+}
 
+//全てのサーフェイスを再作成し、全てのエンティティをリセット
 void Game::resetAll()
-{}
+{
+	SAFE_ON_RESET_DEVICE(console);
+	return;
+}
 
+//予約されていたメモリをすべて削除
 void Game::deleteAll()
 {
+	//全てのグラフィックデバイスについてonDeviceLost()を呼び出す
 	releaseAll();
 	SAFE_DELETE(audio);
 	SAFE_DELETE(graphics);
 	SAFE_DELETE(input);
+	SAFE_DELETE(console);
 	initialized = false;
 }

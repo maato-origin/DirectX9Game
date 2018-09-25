@@ -9,6 +9,7 @@ Game::Game()
 	graphics = NULL;
 	audio = NULL;
 	console = NULL;
+	messageDialog = NULL;
 	fps = 100;
 	fpsOn = false;				//デフォルトではフレームレートは非表示
 	initialized = false;
@@ -103,6 +104,10 @@ void Game::initialize(HWND hw)
 	console->initialize(graphics, input);	//コンソールの準備
 	console->print("---Console---");
 
+	//messageDialogを初期化
+	messageDialog = new MessageDialog();
+	messageDialog->initialize(graphics, input, hwnd);
+
 	//DirectXフォントを初期化
 	if (dxFont.initialize(graphics, gameNS::POINT_SIZE, false, false, gameNS::FONT) == false)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize DirectX font."));
@@ -151,6 +156,7 @@ void Game::renderGame()
 		}
 		graphics->spriteEnd();		//スプライトの描画を終了
 		console->draw();			//コンソールはゲームの前面に表示するように描画
+		messageDialog->draw();		//ダイアログを前面に描画
 
 		//レンダリングを終了
 		graphics->endScene();
@@ -251,6 +257,8 @@ void Game::run(HWND hwnd)
 
 	input->readControllers();						//コントローラの状態を読み取る
 
+	messageDialog->update();						//ボタンクリックをチェック
+
 	audio->run();									//サウンドエンジンの周期的タスクを実行
 
 	//Alt+Enterでフルスクリーンかウィンドウモードを変更
@@ -297,6 +305,7 @@ void Game::consoleCommand()
 //予約されていたビデオメモリを全て解放
 void Game::releaseAll()
 {
+	SAFE_ON_LOST_DEVICE(messageDialog);
 	SAFE_ON_LOST_DEVICE(console);
 	dxFont.onLostDevice();
 	return;
@@ -306,6 +315,7 @@ void Game::releaseAll()
 void Game::resetAll()
 {
 	SAFE_ON_RESET_DEVICE(console);
+	SAFE_ON_RESET_DEVICE(messageDialog);
 	return;
 }
 
@@ -318,5 +328,6 @@ void Game::deleteAll()
 	SAFE_DELETE(graphics);
 	SAFE_DELETE(input);
 	SAFE_DELETE(console);
+	SAFE_DELETE(messageDialog);
 	initialized = false;
 }

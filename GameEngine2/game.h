@@ -11,6 +11,7 @@
 #include "textDX.h"
 #include "console.h"
 #include "gameError.h"
+#include "messageDialog.h"
 
 namespace gameNS
 {
@@ -27,6 +28,7 @@ protected:
 	Input *input;				//Inputへのポインタ
 	Audio *audio;				//Audioへのポインタ
 	Console *console;			//Consoleへのポインタ
+	MessageDialog *messageDialog;	//MessageDialogへのポインタ
 	HWND hwnd;					//ウィンドウハンドル
 	HRESULT hr;					//標準の戻り型
 	LARGE_INTEGER timeStart;	//パフォーマンスカウンターの開始値

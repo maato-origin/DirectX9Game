@@ -131,15 +131,17 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="inputDialog.h" />
+    <ClInclude Include="messagedemo.h" />
+    <ClInclude Include="messageDialog.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="planet.h" />
+    <ClInclude Include="shadow.h" />
     <ClInclude Include="ship.h" />
     <ClInclude Include="spaceWar.h" />
     <ClInclude Include="text.h" />
     <ClInclude Include="textDX.h" />
     <ClInclude Include="textureManager.h" />
-    <ClInclude Include="threeCs.h" />
-    <ClInclude Include="threeCsDX.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="audio.cpp" />
@@ -149,15 +151,17 @@
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="inputDialog.cpp" />
+    <ClCompile Include="messagedemo.cpp" />
+    <ClCompile Include="messageDialog.cpp" />
     <ClCompile Include="plane.cpp" />
     <ClCompile Include="planet.cpp" />
+    <ClCompile Include="shadow.cpp" />
     <ClCompile Include="ship.cpp" />
     <ClCompile Include="spaceWar.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textDX.cpp" />
     <ClCompile Include="textureManager.cpp" />
-    <ClCompile Include="threeCs.cpp" />
-    <ClCompile Include="threeCsDX.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
